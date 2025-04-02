@@ -13,6 +13,19 @@ def init_db():
                   timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     conn.close()
+@app.route('/get_text', methods=['GET'])
+def get_text():
+    try:
+        conn = sqlite3.connect('text_storage.db')
+        c = conn.cursor()
+        res = c.execute("SELECT * FROM texts")
+        data = res.fetchall()
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify({'error': 'Database error', 'details': str(e)}), 500
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 @app.route('/store_text', methods=['POST'])
 def store_text():
